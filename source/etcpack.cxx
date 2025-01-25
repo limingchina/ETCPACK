@@ -90,7 +90,7 @@ void setupAlphaTable();
 // code will be approximately half the number of lines of code.
 // Then the lines between "exhaustive code starts here" and "exhaustive code ends here"
 // can then be removed.
-#define EXHAUSTIVE_CODE_ACTIVE 1
+#define EXHAUSTIVE_CODE_ACTIVE 0
 
 // Remove warnings for unsafe functions such as strcpy
 #pragma warning(disable : 4996)
