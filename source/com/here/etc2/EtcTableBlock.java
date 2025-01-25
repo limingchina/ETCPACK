@@ -21,9 +21,9 @@ public class EtcTableBlock {
                 orig[2] = (byte) EtcUtils.BLUE(img, width, x, y);
 
                 for (q = 0; q < 4; q++) {
-                    approx[0] = (byte) EtcUtils.clamp(avgColor[0] + source.EtcTables.compressParams[table][q], 0, 255);
-                    approx[1] = (byte) EtcUtils.clamp(avgColor[1] + source.EtcTables.compressParams[table][q], 0, 255);
-                    approx[2] = (byte) EtcUtils.clamp(avgColor[2] + source.EtcTables.compressParams[table][q], 0, 255);
+                    approx[0] = (byte) EtcUtils.clamp(avgColor[0] + EtcTables.compressParams[table][q], 0, 255);
+                    approx[1] = (byte) EtcUtils.clamp(avgColor[1] + EtcTables.compressParams[table][q], 0, 255);
+                    approx[2] = (byte) EtcUtils.clamp(avgColor[2] + EtcTables.compressParams[table][q], 0, 255);
 
                     // Here we just use equal weights to R, G and B. Although this will
                     // give visually worse results, it will give a better PSNR score.
@@ -33,7 +33,7 @@ public class EtcTableBlock {
                         best = q;
                     }
                 }
-                pixelIndices = source.EtcTables.scramble[best];
+                pixelIndices = EtcTables.scramble[best];
 
                 // Store the MSB and LSB of the pixel index
                 pixelIndicesMSB_val = EtcUtils.putBits(pixelIndicesMSB_val, (pixelIndices >> 1), 1, i);
@@ -73,9 +73,9 @@ public class EtcTableBlock {
                 orig[2] = (byte) EtcUtils.BLUE(img, width, x, y);
 
                 for (q = 0; q < 4; q++) {
-                    approx[0] = (byte) EtcUtils.clamp(avgColor[0] + source.EtcTables.compressParams[table][q], 0, 255);
-                    approx[1] = (byte) EtcUtils.clamp(avgColor[1] + source.EtcTables.compressParams[table][q], 0, 255);
-                    approx[2] = (byte) EtcUtils.clamp(avgColor[2] + source.EtcTables.compressParams[table][q], 0, 255);
+                    approx[0] = (byte) EtcUtils.clamp(avgColor[0] + EtcTables.compressParams[table][q], 0, 255);
+                    approx[1] = (byte) EtcUtils.clamp(avgColor[1] + EtcTables.compressParams[table][q], 0, 255);
+                    approx[2] = (byte) EtcUtils.clamp(avgColor[2] + EtcTables.compressParams[table][q], 0, 255);
 
                     // Here we just use equal weights to R, G and B. Although this will
                     // give visually worse results, it will give a better PSNR score.
@@ -88,7 +88,7 @@ public class EtcTableBlock {
                     }
                 }
 
-                pixelIndices = source.EtcTables.scramble[best];
+                pixelIndices = EtcTables.scramble[best];
 
                 // Store the MSB and LSB of the pixel index
                 pixelIndicesMSB_val = EtcUtils.putBits(pixelIndicesMSB_val, (pixelIndices >> 1), 1, i);
@@ -131,9 +131,9 @@ public class EtcTableBlock {
                 orig[2] = (byte) EtcUtils.BLUE(img, width, x, y);
 
                 for (q = 0; q < 4; q++) {
-                    approx[0] = (byte) EtcUtils.clamp(avgColor[0] + source.EtcTables.compressParams[table][q], 0, 255);
-                    approx[1] = (byte) EtcUtils.clamp(avgColor[1] + source.EtcTables.compressParams[table][q], 0, 255);
-                    approx[2] = (byte) EtcUtils.clamp(avgColor[2] + source.EtcTables.compressParams[table][q], 0, 255);
+                    approx[0] = (byte) EtcUtils.clamp(avgColor[0] + EtcTables.compressParams[table][q], 0, 255);
+                    approx[1] = (byte) EtcUtils.clamp(avgColor[1] + EtcTables.compressParams[table][q], 0, 255);
+                    approx[2] = (byte) EtcUtils.clamp(avgColor[2] + EtcTables.compressParams[table][q], 0, 255);
 
                     // Here we just use equal weights to R, G and B. Although this will
                     // give visually worse results, it will give a better PSNR score.
@@ -144,7 +144,7 @@ public class EtcTableBlock {
                     }
                 }
 
-                pixelIndices = source.EtcTables.scramble[best];
+                pixelIndices = EtcTables.scramble[best];
 
                 // Store the MSB and LSB of the pixel index
                 pixelIndicesMSB_val = EtcUtils.putBits(pixelIndicesMSB_val, (pixelIndices >> 1), 1, i);
@@ -184,9 +184,9 @@ public class EtcTableBlock {
                 orig[2] = (byte) EtcUtils.BLUE(img, width, x, y);
 
                 for (q = 0; q < 4; q++) {
-                    approx[0] = (byte) EtcUtils.clamp(avgColor[0] + source.EtcTables.compressParams[table][q], 0, 255);
-                    approx[1] = (byte) EtcUtils.clamp(avgColor[1] + source.EtcTables.compressParams[table][q], 0, 255);
-                    approx[2] = (byte) EtcUtils.clamp(avgColor[2] + source.EtcTables.compressParams[table][q], 0, 255);
+                    approx[0] = (byte) EtcUtils.clamp(avgColor[0] + EtcTables.compressParams[table][q], 0, 255);
+                    approx[1] = (byte) EtcUtils.clamp(avgColor[1] + EtcTables.compressParams[table][q], 0, 255);
+                    approx[2] = (byte) EtcUtils.clamp(avgColor[2] + EtcTables.compressParams[table][q], 0, 255);
 
                     // Here we just use equal weights to R, G and B. Although this will
                     // give visually worse results, it will give a better PSNR score.
@@ -196,7 +196,7 @@ public class EtcTableBlock {
                         best = q;
                     }
                 }
-                pixelIndices = source.EtcTables.scramble[best];
+                pixelIndices = EtcTables.scramble[best];
 
                 // Store the MSB and LSB of the pixel index
                 pixelIndicesMSB_val = EtcUtils.putBits(pixelIndicesMSB_val, (pixelIndices >> 1), 1, i);
@@ -238,9 +238,9 @@ public class EtcTableBlock {
                 orig[2] = (byte) EtcUtils.BLUE(img, width, x, y);
 
                 for (q = 0; q < 4; q++) {
-                    approx[0] = (byte) EtcUtils.clamp(avgColor[0] + source.EtcTables.compressParams[table][q], 0, 255);
-                    approx[1] = (byte) EtcUtils.clamp(avgColor[1] + source.EtcTables.compressParams[table][q], 0, 255);
-                    approx[2] = (byte) EtcUtils.clamp(avgColor[2] + source.EtcTables.compressParams[table][q], 0, 255);
+                    approx[0] = (byte) EtcUtils.clamp(avgColor[0] + EtcTables.compressParams[table][q], 0, 255);
+                    approx[1] = (byte) EtcUtils.clamp(avgColor[1] + EtcTables.compressParams[table][q], 0, 255);
+                    approx[2] = (byte) EtcUtils.clamp(avgColor[2] + EtcTables.compressParams[table][q], 0, 255);
 
                     // Here we just use equal weights to R, G and B. Although this will
                     // give visually worse results, it will give a better PSNR score.
@@ -252,7 +252,7 @@ public class EtcTableBlock {
                         best = q;
                     }
                 }
-                pixelIndices = source.EtcTables.scramble[best];
+                pixelIndices = EtcTables.scramble[best];
 
                 // Store the MSB and LSB of the pixel index
                 pixelIndicesMSB_val = EtcUtils.putBits(pixelIndicesMSB_val, (pixelIndices >> 1), 1, i);
@@ -297,9 +297,9 @@ public class EtcTableBlock {
                 orig[2] = (byte) EtcUtils.BLUE(img, width, x, y);
 
                 for (q = 0; q < 4; q++) {
-                    approx[0] = (byte) EtcUtils.clamp(avgColor[0] + source.EtcTables.compressParams[table][q], 0, 255);
-                    approx[1] = (byte) EtcUtils.clamp(avgColor[1] + source.EtcTables.compressParams[table][q], 0, 255);
-                    approx[2] = (byte) EtcUtils.clamp(avgColor[2] + source.EtcTables.compressParams[table][q], 0, 255);
+                    approx[0] = (byte) EtcUtils.clamp(avgColor[0] + EtcTables.compressParams[table][q], 0, 255);
+                    approx[1] = (byte) EtcUtils.clamp(avgColor[1] + EtcTables.compressParams[table][q], 0, 255);
+                    approx[2] = (byte) EtcUtils.clamp(avgColor[2] + EtcTables.compressParams[table][q], 0, 255);
 
                     // Here we just use equal weights to R, G and B. Although this will
                     // give visually worse results, it will give a better PSNR score.
@@ -309,7 +309,7 @@ public class EtcTableBlock {
                         best = q;
                     }
                 }
-                pixelIndices = source.EtcTables.scramble[best];
+                pixelIndices = EtcTables.scramble[best];
 
                 // Store the MSB and LSB of the pixel index
                 pixelIndicesMSB_val = EtcUtils.putBits(pixelIndicesMSB_val, (pixelIndices >> 1), 1, i);

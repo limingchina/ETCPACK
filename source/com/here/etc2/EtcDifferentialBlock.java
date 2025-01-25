@@ -47,21 +47,21 @@ public class EtcDifferentialBlock {
                                 int b = color1[2];
 
                                 if (i == 0 && j == 0) {
-                                    r = EtcUtils.clamp(r + source.EtcTables.compressParamsFast[mult1], 0, 255);
-                                    g = EtcUtils.clamp(g + source.EtcTables.compressParamsFast[mult1], 0, 255);
-                                    b = EtcUtils.clamp(b + source.EtcTables.compressParamsFast[mult1], 0, 255);
+                                    r = EtcUtils.clamp(r + EtcTables.compressParamsFast[mult1], 0, 255);
+                                    g = EtcUtils.clamp(g + EtcTables.compressParamsFast[mult1], 0, 255);
+                                    b = EtcUtils.clamp(b + EtcTables.compressParamsFast[mult1], 0, 255);
                                 } else if (i == 0 && j == 1) {
-                                    r = EtcUtils.clamp(r + source.EtcTables.compressParamsFast[mult2], 0, 255);
-                                    g = EtcUtils.clamp(g + source.EtcTables.compressParamsFast[mult2], 0, 255);
-                                    b = EtcUtils.clamp(b + source.EtcTables.compressParamsFast[mult2], 0, 255);
+                                    r = EtcUtils.clamp(r + EtcTables.compressParamsFast[mult2], 0, 255);
+                                    g = EtcUtils.clamp(g + EtcTables.compressParamsFast[mult2], 0, 255);
+                                    b = EtcUtils.clamp(b + EtcTables.compressParamsFast[mult2], 0, 255);
                                 } else if (i == 1 && j == 0) {
-                                    r = EtcUtils.clamp(r + source.EtcTables.compressParamsFast[mult3], 0, 255);
-                                    g = EtcUtils.clamp(g + source.EtcTables.compressParamsFast[mult3], 0, 255);
-                                    b = EtcUtils.clamp(b + source.EtcTables.compressParamsFast[mult3], 0, 255);
+                                    r = EtcUtils.clamp(r + EtcTables.compressParamsFast[mult3], 0, 255);
+                                    g = EtcUtils.clamp(g + EtcTables.compressParamsFast[mult3], 0, 255);
+                                    b = EtcUtils.clamp(b + EtcTables.compressParamsFast[mult3], 0, 255);
                                 } else if (i == 1 && j == 1) {
-                                    r = EtcUtils.clamp(r + source.EtcTables.compressParamsFast[mult4], 0, 255);
-                                    g = EtcUtils.clamp(g + source.EtcTables.compressParamsFast[mult4], 0, 255);
-                                    b = EtcUtils.clamp(b + source.EtcTables.compressParamsFast[mult4], 0, 255);
+                                    r = EtcUtils.clamp(r + EtcTables.compressParamsFast[mult4], 0, 255);
+                                    g = EtcUtils.clamp(g + EtcTables.compressParamsFast[mult4], 0, 255);
+                                    b = EtcUtils.clamp(b + EtcTables.compressParamsFast[mult4], 0, 255);
                                 }
 
                                 approx[0] = (byte) r;
@@ -142,21 +142,21 @@ public class EtcDifferentialBlock {
                                 int b = color1[2];
 
                                 if (i == 0 && j == 0) {
-                                    r = EtcUtils.clamp(r + source.EtcTables.compressParamsFast[mult1], 0, 255);
-                                    g = EtcUtils.clamp(g + source.EtcTables.compressParamsFast[mult1], 0, 255);
-                                    b = EtcUtils.clamp(b + source.EtcTables.compressParamsFast[mult1], 0, 255);
+                                    r = EtcUtils.clamp(r + EtcTables.compressParamsFast[mult1], 0, 255);
+                                    g = EtcUtils.clamp(g + EtcTables.compressParamsFast[mult1], 0, 255);
+                                    b = EtcUtils.clamp(b + EtcTables.compressParamsFast[mult1], 0, 255);
                                 } else if (i == 0 && j == 1) {
-                                    r = EtcUtils.clamp(r + source.EtcTables.compressParamsFast[mult2], 0, 255);
-                                    g = EtcUtils.clamp(g + source.EtcTables.compressParamsFast[mult2], 0, 255);
-                                    b = EtcUtils.clamp(b + source.EtcTables.compressParamsFast[mult2], 0, 255);
+                                    r = EtcUtils.clamp(r + EtcTables.compressParamsFast[mult2], 0, 255);
+                                    g = EtcUtils.clamp(g + EtcTables.compressParamsFast[mult2], 0, 255);
+                                    b = EtcUtils.clamp(b + EtcTables.compressParamsFast[mult2], 0, 255);
                                 } else if (i == 1 && j == 0) {
-                                    r = EtcUtils.clamp(r + source.EtcTables.compressParamsFast[mult3], 0, 255);
-                                    g = EtcUtils.clamp(g + source.EtcTables.compressParamsFast[mult3], 0, 255);
-                                    b = EtcUtils.clamp(b + source.EtcTables.compressParamsFast[mult3], 0, 255);
+                                    r = EtcUtils.clamp(r + EtcTables.compressParamsFast[mult3], 0, 255);
+                                    g = EtcUtils.clamp(g + EtcTables.compressParamsFast[mult3], 0, 255);
+                                    b = EtcUtils.clamp(b + EtcTables.compressParamsFast[mult3], 0, 255);
                                 } else if (i == 1 && j == 1) {
-                                    r = EtcUtils.clamp(r + source.EtcTables.compressParamsFast[mult4], 0, 255);
-                                    g = EtcUtils.clamp(g + source.EtcTables.compressParamsFast[mult4], 0, 255);
-                                    b = EtcUtils.clamp(b + source.EtcTables.compressParamsFast[mult4], 0, 255);
+                                    r = EtcUtils.clamp(r + EtcTables.compressParamsFast[mult4], 0, 255);
+                                    g = EtcUtils.clamp(g + EtcTables.compressParamsFast[mult4], 0, 255);
+                                    b = EtcUtils.clamp(b + EtcTables.compressParamsFast[mult4], 0, 255);
                                 }
 
                                 approx[0] = (byte) r;

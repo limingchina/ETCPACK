@@ -44,8 +44,8 @@ public class EtcThumbBlock {
                         int g = color1[1];
                         int b = color1[2];
 
-                        int index = source.EtcTables.table58H[p];
-                        int diff = source.EtcTables.compressParamsFast[d];
+                        int index = EtcTables.table58H[p];
+                        int diff = EtcTables.compressParamsFast[d];
 
                         r = EtcUtils.clamp(r + diff * ((index >> 0) & 1), 0, 255);
                         g = EtcUtils.clamp(g + diff * ((index >> 1) & 1), 0, 255);
@@ -120,8 +120,8 @@ public class EtcThumbBlock {
                         int g = color1[1];
                         int b = color1[2];
 
-                        int index = source.EtcTables.table58H[p];
-                        int diff = source.EtcTables.compressParamsFast[d];
+                        int index = EtcTables.table58H[p];
+                        int diff = EtcTables.compressParamsFast[d];
 
                         r = EtcUtils.clamp(r + diff * ((index >> 0) & 1), 0, 255);
                         g = EtcUtils.clamp(g + diff * ((index >> 1) & 1), 0, 255);
@@ -198,8 +198,8 @@ public class EtcThumbBlock {
                         int g = color1[1];
                         int b = color1[2];
 
-                        int index = source.EtcTables.table59T[p];
-                        int diff = source.EtcTables.compressParamsFast[d];
+                        int index = EtcTables.table59T[p];
+                        int diff = EtcTables.compressParamsFast[d];
 
                         r = EtcUtils.clamp(r + diff * ((index >> 0) & 1), 0, 255);
                         g = EtcUtils.clamp(g + diff * ((index >> 1) & 1), 0, 255);
@@ -274,8 +274,8 @@ public class EtcThumbBlock {
                         int g = color1[1];
                         int b = color1[2];
 
-                        int index = source.EtcTables.table59T[p];
-                        int diff = source.EtcTables.compressParamsFast[d];
+                        int index = EtcTables.table59T[p];
+                        int diff = EtcTables.compressParamsFast[d];
 
                         r = EtcUtils.clamp(r + diff * ((index >> 0) & 1), 0, 255);
                         g = EtcUtils.clamp(g + diff * ((index >> 1) & 1), 0, 255);

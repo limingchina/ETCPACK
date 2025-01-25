@@ -44,7 +44,7 @@ public class EtcDiffFlipBlock {
                         orig[2] = (byte) EtcUtils.BLUE(img, width, startx + j, starty + i);
 
                         // Calculate the color based on the multiplier and flip mode
-                        int diff = source.EtcTables.compressParamsFast[mult];
+                        int diff = EtcTables.compressParamsFast[mult];
                         if (flip == 0) {
                             approx[0] = (byte) EtcUtils.clamp(color1[0] + diff, 0, 255);
                             approx[1] = (byte) EtcUtils.clamp(color1[1] + diff, 0, 255);
@@ -120,7 +120,7 @@ public class EtcDiffFlipBlock {
                         orig[2] = (byte) EtcUtils.BLUE(img, width, startx + j, starty + i);
 
                         // Calculate the color based on the multiplier and flip mode
-                        int diff = source.EtcTables.compressParamsFast[mult];
+                        int diff = EtcTables.compressParamsFast[mult];
                         if (flip == 0) {
                             approx[0] = (byte) EtcUtils.clamp(color1[0] + diff, 0, 255);
                             approx[1] = (byte) EtcUtils.clamp(color1[1] + diff, 0, 255);

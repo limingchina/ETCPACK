@@ -9,6 +9,8 @@ import java.nio.channels.FileChannel;
 import java.util.Arrays;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.io.FileInputStream;
+import java.util.StringTokenizer;
 
 public class EtcFile {
 
@@ -99,7 +101,7 @@ public class EtcFile {
             if (wdiv4 * 4 != width[0]) {
                 System.out.print(" Width = " + width[0] + " is not divisible by four... ");
                 System.out.print(" expanding image in x-dir... ");
-                if (etcpack.expandToEvenWidth(img[0], width[0], height[0], expandedWidth, expandedHeight, bitrate)) {
+                if (EtcUtils.expandToWidthDivByFour(img[0], width[0], height[0], expandedWidth, expandedHeight, bitrate)) {
                     System.out.println("OK.");
                 } else {
                     System.out.println("\n Error: could not expand image");
@@ -109,7 +111,7 @@ public class EtcFile {
             if (hdiv4 * 4 != height[0]) {
                 System.out.print(" Height = " + height[0] + " is not divisible by four... ");
                 System.out.print(" expanding image in y-dir...");
-                if (etcpack.expandToHeightDivByFour(img[0], expandedWidth[0], height[0], expandedWidth, expandedHeight, bitrate)) {
+                if (EtcUtils.expandToHeightDivByFour(img[0], expandedWidth[0], height[0], expandedWidth, expandedHeight, bitrate)) {
                     System.out.println("OK.");
                 } else {
                     System.out.println("\n Error: could not expand image");
@@ -163,96 +165,109 @@ public class EtcFile {
     }
 
     // Parses the arguments from the command line.
-    public static void readArguments(String[] argv, String[] src, String[] dst, int[] mode, int[] speed, int[] metric, int[] codec, int[] format, boolean[] verbose, int[] formatSigned, boolean[] ktxFile) {
-        boolean srcFound = false, dstFound = false;
-        for (int i = 0; i < argv.length; i++) {
-            if (argv[i].startsWith("-")) {
-                if (i == argv.length - 1) {
-                    System.out.println("flag missing argument: " + argv[i] + "!");
+    public static Arguments readArguments(String[] args) {
+        Arguments arguments = new Arguments();
+        arguments.src = "";
+        arguments.dst = "";
+        arguments.mode = 0;
+        arguments.speed = 0;
+        arguments.metric = 0;
+        arguments.codec = 0;
+        arguments.fileFormat = 0;
+        arguments.verbose = false;
+        arguments.formatSigned = 0;
+        arguments.ktxFile = false;
+
+        boolean srcFound = false;
+        boolean dstFound = false;
+
+        for (int i = 0; i < args.length; i++) {
+            if (args[i].startsWith("-")) {
+                if (i == args.length - 1) {
+                    System.out.println("flag missing argument: " + args[i] + "!");
                     System.exit(1);
                 }
-                if (argv[i].equals("-s")) {
-                    if (argv[i + 1].equals("slow"))
-                        speed[0] = 0; // SPEED_SLOW
-                    else if (argv[i + 1].equals("medium"))
-                        speed[0] = 1; // SPEED_MEDIUM
-                    else if (argv[i + 1].equals("fast"))
-                        speed[0] = 2; // SPEED_FAST
+                if (args[i].equals("-s")) {
+                    if (args[i + 1].equals("slow"))
+                        arguments.speed = EtcConstants.SPEED_SLOW;
+                    else if (args[i + 1].equals("medium"))
+                        arguments.speed = EtcConstants.SPEED_MEDIUM;
+                    else if (args[i + 1].equals("fast"))
+                        arguments.speed = EtcConstants.SPEED_FAST;
                     else {
-                        System.out.println("Error: " + argv[i + 1] + " not part of flag " + argv[i]);
+                        System.out.println("Error: " + args[i + 1] + " not part of flag " + args[i]);
                         System.exit(1);
                     }
-                } else if (argv[i].equals("-v")) {
-                    if (argv[i + 1].equals("off"))
-                        verbose[0] = false;
-                    else if (argv[i + 1].equals("on"))
-                        verbose[0] = true;
+                } else if (args[i].equals("-v")) {
+                    if (args[i + 1].equals("off"))
+                        arguments.verbose = false;
+                    else if (args[i + 1].equals("on"))
+                        arguments.verbose = true;
                     else {
-                        System.out.println("Error: " + argv[i + 1] + " not part of flag " + argv[i]);
+                        System.out.println("Error: " + args[i + 1] + " not part of flag " + args[i]);
                         System.exit(1);
                     }
-                } else if (argv[i].equals("-e")) {
-                    if (argv[i + 1].equals("perceptual"))
-                        metric[0] = 0; // METRIC_PERCEPTUAL
-                    else if (argv[i + 1].equals("nonperceptual"))
-                        metric[0] = 1; // METRIC_NONPERCEPTUAL
+                } else if (args[i].equals("-metric") || args[i].equals("-e")) {
+                    if (args[i + 1].equals("perceptual"))
+                        arguments.metric = EtcConstants.METRIC_PERCEPTUAL;
+                    else if (args[i + 1].equals("nonperceptual"))
+                        arguments.metric = EtcConstants.METRIC_NONPERCEPTUAL;
                     else {
-                        System.out.println("Error: " + argv[i + 1] + " not part of flag " + argv[i]);
+                        System.out.println("Error: " + args[i + 1] + " not part of flag " + args[i]);
                         System.exit(1);
                     }
-                } else if (argv[i].equals("-c")) {
-                    if (argv[i + 1].equals("etc") || argv[i + 1].equals("etc1"))
-                        codec[0] = 0; // CODEC_ETC
-                    else if (argv[i + 1].equals("etc2"))
-                        codec[0] = 1; // CODEC_ETC2
+                } else if (args[i].equals("-codec") || args[i].equals("-c")) {
+                    if (args[i + 1].equals("etc") || args[i + 1].equals("etc1"))
+                        arguments.codec = EtcConstants.CODEC_ETC;
+                    else if (args[i + 1].equals("etc2"))
+                        arguments.codec = EtcConstants.CODEC_ETC2;
                     else {
-                        System.out.println("Error: " + argv[i + 1] + " not part of flag " + argv[i]);
+                        System.out.println("Error: " + args[i + 1] + " not part of flag " + args[i]);
                         System.exit(1);
                     }
-                } else if (argv[i].equals("-f")) {
-                    if (argv[i + 1].equals("R"))
-                        format[0] = 5; // ETC2PACKAGE_R_NO_MIPMAPS
-                    else if (argv[i + 1].equals("RG"))
-                        format[0] = 6; // ETC2PACKAGE_RG_NO_MIPMAPS
-                    else if (argv[i + 1].equals("R_signed")) {
-                        format[0] = 5; // ETC2PACKAGE_R_NO_MIPMAPS
-                        formatSigned[0] = 1;
-                    } else if (argv[i + 1].equals("RG_signed")) {
-                        format[0] = 6; // ETC2PACKAGE_RG_NO_MIPMAPS
-                        formatSigned[0] = 1;
-                    } else if (argv[i + 1].equals("RGB"))
-                        format[0] = 1; // ETC2PACKAGE_RGB_NO_MIPMAPS
-                    else if (argv[i + 1].equals("sRGB"))
-                        format[0] = 9; // ETC2PACKAGE_sRGB_NO_MIPMAPS
-                    else if (argv[i + 1].equals("RGBA") || argv[i + 1].equals("RGBA8"))
-                        format[0] = 3; // ETC2PACKAGE_RGBA_NO_MIPMAPS
-                    else if (argv[i + 1].equals("sRGBA") || argv[i + 1].equals("sRGBA8"))
-                        format[0] = 10; // ETC2PACKAGE_sRGBA_NO_MIPMAPS
-                    else if (argv[i + 1].equals("RGBA1"))
-                        format[0] = 4; // ETC2PACKAGE_RGBA1_NO_MIPMAPS
-                    else if (argv[i + 1].equals("sRGBA1"))
-                        format[0] = 11; // ETC2PACKAGE_sRGBA1_NO_MIPMAPS
+                } else if (args[i].equals("-format") || args[i].equals("-f")) {
+                    if (args[i + 1].equals("R"))
+                        arguments.fileFormat = EtcConstants.ETC2PACKAGE_R_NO_MIPMAPS;
+                    else if (args[i + 1].equals("RG"))
+                        arguments.fileFormat = EtcConstants.ETC2PACKAGE_RG_NO_MIPMAPS;
+                    else if (args[i + 1].equals("R_signed")) {
+                        arguments.fileFormat = EtcConstants.ETC2PACKAGE_R_NO_MIPMAPS;
+                        arguments.formatSigned = 1;
+                    } else if (args[i + 1].equals("RG_signed")) {
+                        arguments.fileFormat = EtcConstants.ETC2PACKAGE_RG_NO_MIPMAPS;
+                        arguments.formatSigned = 1;
+                    } else if (args[i + 1].equals("RGB"))
+                        arguments.fileFormat = EtcConstants.ETC2PACKAGE_RGB_NO_MIPMAPS;
+                    else if (args[i + 1].equals("sRGB"))
+                        arguments.fileFormat = EtcConstants.ETC2PACKAGE_sRGB_NO_MIPMAPS;
+                    else if (args[i + 1].equals("RGBA") || args[i + 1].equals("RGBA8"))
+                        arguments.fileFormat = EtcConstants.ETC2PACKAGE_RGBA_NO_MIPMAPS;
+                    else if (args[i + 1].equals("sRGBA") || args[i + 1].equals("sRGBA8"))
+                        arguments.fileFormat = EtcConstants.ETC2PACKAGE_sRGBA_NO_MIPMAPS;
+                    else if (args[i + 1].equals("RGBA1"))
+                        arguments.fileFormat = EtcConstants.ETC2PACKAGE_RGBA1_NO_MIPMAPS;
+                    else if (args[i + 1].equals("sRGBA1"))
+                        arguments.fileFormat = EtcConstants.ETC2PACKAGE_sRGBA1_NO_MIPMAPS;
                     else {
-                        System.out.println("Error: " + argv[i + 1] + " not part of flag " + argv[i]);
+                        System.out.println("Error: " + args[i + 1] + " not part of flag " + args[i]);
                         System.exit(1);
                     }
-                } else if (argv[i].equals("-p")) {
-                    mode[0] = 2; // MODE_PSNR
-                    i--; //ugly way of negating the increment of i done later because -p doesn't have an argument.
                 } else {
-                    System.out.println("Error: cannot interpret flag " + argv[i] + " " + argv[i + 1]);
+                    System.out.println("Error: cannot interpret flag " + args[i] + " " + args[i + 1]);
                     System.exit(1);
                 }
                 i++;
             } else {
                 if (srcFound && dstFound) {
-                    System.out.println("too many arguments! expecting src, dst; found " + src[0] + ", " + dst[0] + ", " + argv[i]);
+                    System.out.println("too many arguments! expecting src, dst; found " + arguments.src + ", " + arguments.dst + ", " + args[i]);
                     System.exit(1);
                 } else if (srcFound) {
-                    dst[0] = argv[i];
+                    arguments.dst = args[i];
+                    if(arguments.dst.endsWith(".ktx"))
+                        arguments.ktxFile = true;
                     dstFound = true;
                 } else {
-                    src[0] = argv[i];
+                    arguments.src = args[i];
                     srcFound = true;
                 }
             }
@@ -261,145 +276,51 @@ public class EtcFile {
             System.out.println("too few arguments! expecting src, dst");
             System.exit(1);
         }
-        if (mode[0] == 2)
-            return;
-        int q = findPosOfExtension(src[0]);
-        if (q < 0) {
-            System.out.println("invalid source file: " + src[0]);
-            System.exit(1);
-        }
-        if (src[0].substring(q).equals(".pkm")) {
-            mode[0] = 1; // MODE_UNCOMPRESS
-        } else if (src[0].substring(q).equals(".ktx")) {
-            mode[0] = 1; // MODE_UNCOMPRESS
-            ktxFile[0] = true;
-            System.out.println("decompressing ktx");
-        } else {
-            q = findPosOfExtension(dst[0]);
-            if (q < 0) {
-                System.out.println("invalid destination file: " + src[0]);
-                System.exit(1);
-            }
-            if (dst[0].substring(q).equals(".pkm")) {
-                mode[0] = 0; // MODE_COMPRESS
-            } else if (dst[0].substring(q).equals(".ktx")) {
-                ktxFile[0] = true;
-                mode[0] = 0; // MODE_COMPRESS
-                System.out.println("compressing to ktx");
-            } else {
-                System.out.println("source or destination must be a .pkm or .ktx file");
-                System.exit(1);
-            }
-        }
-        if (codec[0] == 0 && format[0] != 1) {
-            System.out.println("ETC1 codec only supports RGB format");
-            System.exit(1);
-        } else if (codec[0] == 0)
-            format[0] = 0; // ETC1_RGB_NO_MIPMAPS
+        return arguments;
     }
 
-    public static void readPPM(RandomAccessFile raf, int width, int height, byte[] img) throws IOException {
+    private static String readLine(RandomAccessFile raf) throws IOException {
+        StringBuilder line = new StringBuilder();
+        int c;
+        while ((c = raf.read()) != -1) {
+            if (c == '\n') {
+                break;
+            }
+            line.append((char) c);
+        }
+        return line.toString();
+    }
+
+    public static byte[] readPPM(String filename, int[] width, int[] height) throws IOException {
+        RandomAccessFile raf = new RandomAccessFile(filename, "r");
+
+        // Read the magic number
+        String magicNumber = readLine(raf).trim();
+        if (!magicNumber.equals("P6")) {
+            throw new IOException("Unsupported PPM format: " + magicNumber);
+        }
+
+        // Skip comments
         String line;
-        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+        do {
+            line = readLine(raf).trim();
+        } while (line.startsWith("#"));
 
-        // Read PPM header
-        line = reader.readLine();
-        if (!line.equals("P6")) {
-            System.out.println("Wrong file format");
-            return;
-        }
-        line = reader.readLine();
-        String[] dimensions = line.split(" ");
-        width = Integer.parseInt(dimensions[0]);
-        height = Integer.parseInt(dimensions[1]);
-        line = reader.readLine();
+        // Read width, height, and max color value
+        StringTokenizer tokenizer = new StringTokenizer(line);
+        width[0] = Integer.parseInt(tokenizer.nextToken());
+        height[0] = Integer.parseInt(tokenizer.nextToken());
+        line = readLine(raf).trim();
         if (!line.equals("255")) {
-            System.out.println("Wrong file format");
-            return;
+            throw new IOException("Unsupported PPM format: " + line);
         }
 
-        img = new byte[width * height * 3];
-        raf.read(img);
+        byte[] img = new byte[height[0]*width[0]*3];
+        int read = raf.read(img);
+        raf.close();
+        return img;
     }
-
-    public static void readKTX(RandomAccessFile raf, int width, int height, byte[] img) throws IOException {
-        readKTX(raf, width, height, img, null);
-    }
-
-    public static void readKTX(RandomAccessFile raf, int width, int height, byte[] img, byte[] alphaimg) throws IOException {
-        int[] endian = new int[1];
-        int[] glType = new int[1];
-        int[] glTypeSize = new int[1];
-        int[] glFormat = new int[1];
-        int[] glInternalFormat = new int[1];
-        int[] glBaseInternalFormat = new int[1];
-        int[] pixelWidth = new int[1];
-        int[] pixelHeight = new int[1];
-        int[] pixelDepth = new int[1];
-        int[] numberOfArrayElements = new int[1];
-        int[] numberOfFaces = new int[1];
-        int[] numberOfMipmapLevels = new int[1];
-        int[] bytesOfKeyValueData = new int[1];
-
-        // Read KTX header
-        byte[] identifier = new byte[12];
-        raf.read(identifier);
-        if (!Arrays.equals(identifier, new byte[]{(byte) 0xAB, 0x4B, 0x54, 0x58, 0x20, 0x31, 0x31, (byte) 0xBB, 0x0D, 0x0A, 0x1A, 0x0A})) {
-            System.out.println("Wrong file format");
-            return;
-        }
-
-        EtcUtils.readBigEndian4ByteWord(endian, raf);
-        EtcUtils.readBigEndian4ByteWord(glType, raf);
-        EtcUtils.readBigEndian4ByteWord(glTypeSize, raf);
-        EtcUtils.readBigEndian4ByteWord(glFormat, raf);
-        EtcUtils.readBigEndian4ByteWord(glInternalFormat, raf);
-        EtcUtils.readBigEndian4ByteWord(glBaseInternalFormat, raf);
-        EtcUtils.readBigEndian4ByteWord(pixelWidth, raf);
-        EtcUtils.readBigEndian4ByteWord(pixelHeight, raf);
-        EtcUtils.readBigEndian4ByteWord(pixelDepth, raf);
-        EtcUtils.readBigEndian4ByteWord(numberOfArrayElements, raf);
-        EtcUtils.readBigEndian4ByteWord(numberOfFaces, raf);
-        EtcUtils.readBigEndian4ByteWord(numberOfMipmapLevels, raf);
-        EtcUtils.readBigEndian4ByteWord(bytesOfKeyValueData, raf);
-
-        width = pixelWidth[0];
-        height = pixelHeight[0];
-
-        // Skip key/value data
-        raf.skipBytes(bytesOfKeyValueData[0]);
-
-        // Read image data
-        int imageSize = 0;
-        if (glBaseInternalFormat[0] == source.EtcTables.GL_RGB8) {
-            imageSize = width * height * 3;
-            img = new byte[imageSize];
-            raf.read(img);
-        } else if (glBaseInternalFormat[0] == source.EtcTables.GL_RGBA8) {
-            imageSize = width * height * 4;
-            img = new byte[width * height * 3];
-            alphaimg = new byte[width * height];
-            byte[] rgba = new byte[imageSize];
-            raf.read(rgba);
-            for (int i = 0; i < width * height; i++) {
-                img[i * 3 + 0] = rgba[i * 4 + 0];
-                img[i * 3 + 1] = rgba[i * 4 + 1];
-                img[i * 3 + 2] = rgba[i * 4 + 2];
-                alphaimg[i] = rgba[i * 4 + 3];
-            }
-        } else if (glBaseInternalFormat[0] == source.EtcTables.GL_R8 || glBaseInternalFormat[0] == source.EtcTables.GL_RG8) {
-            imageSize = width * height * (glBaseInternalFormat[0] == source.EtcTables.GL_R8 ? 1 : 2);
-            img = new byte[width * height * 3];
-            byte[] rorg = new byte[imageSize];
-            raf.read(rorg);
-            for (int i = 0; i < width * height; i++) {
-                img[i * 3 + 0] = rorg[i * (glBaseInternalFormat[0] == source.EtcTables.GL_R8 ? 1 : 2) + 0];
-                img[i * 3 + 1] = (byte) (glBaseInternalFormat[0] == source.EtcTables.GL_R8 ? 0 : rorg[i * 2 + 1]);
-                img[i * 3 + 2] = 0;
-            }
-        }
-    }
-
+    
     public static void writeCompressedBlock(int compressed1, int compressed2, String dst, int fileFormat) throws IOException {
         File outputFile = new File(dst);
         RandomAccessFile raf = new RandomAccessFile(outputFile, "rw");
@@ -407,13 +328,13 @@ public class EtcFile {
         long fileSize = channel.size();
         raf.seek(fileSize);
 
-        if (fileFormat == source.EtcTables.ETC1_RGB_NO_MIPMAPS || fileFormat == source.EtcTables.ETC2PACKAGE_RGB_NO_MIPMAPS || fileFormat == source.EtcTables.ETC2PACKAGE_sRGB_NO_MIPMAPS || fileFormat == source.EtcTables.ETC2PACKAGE_R_NO_MIPMAPS || fileFormat == source.EtcTables.ETC2PACKAGE_RG_NO_MIPMAPS || fileFormat == source.EtcTables.ETC2PACKAGE_R_SIGNED_NO_MIPMAPS || fileFormat == source.EtcTables.ETC2PACKAGE_RG_SIGNED_NO_MIPMAPS) {
+        if (fileFormat == EtcConstants.ETC1_RGB_NO_MIPMAPS || fileFormat == EtcConstants.ETC2PACKAGE_RGB_NO_MIPMAPS || fileFormat == EtcConstants.ETC2PACKAGE_sRGB_NO_MIPMAPS || fileFormat == EtcConstants.ETC2PACKAGE_R_NO_MIPMAPS || fileFormat == EtcConstants.ETC2PACKAGE_RG_NO_MIPMAPS || fileFormat == EtcConstants.ETC2PACKAGE_R_SIGNED_NO_MIPMAPS || fileFormat == EtcConstants.ETC2PACKAGE_RG_SIGNED_NO_MIPMAPS) {
             ByteBuffer buffer = ByteBuffer.allocate(8);
             buffer.order(ByteOrder.BIG_ENDIAN);
             buffer.putInt(compressed1);
             buffer.putInt(compressed2);
             raf.write(buffer.array());
-        } else if (fileFormat == source.EtcTables.ETC2PACKAGE_RGBA_NO_MIPMAPS || fileFormat == source.EtcTables.ETC2PACKAGE_sRGBA_NO_MIPMAPS || fileFormat == source.EtcTables.ETC2PACKAGE_RGBA1_NO_MIPMAPS) {
+        } else if (fileFormat == EtcConstants.ETC2PACKAGE_RGBA_NO_MIPMAPS || fileFormat == EtcConstants.ETC2PACKAGE_sRGBA_NO_MIPMAPS || fileFormat == EtcConstants.ETC2PACKAGE_RGBA1_NO_MIPMAPS) {
             ByteBuffer buffer = ByteBuffer.allocate(8);
             buffer.order(ByteOrder.BIG_ENDIAN);
             buffer.putInt(compressed1);
@@ -430,10 +351,123 @@ public class EtcFile {
         long fileSize = channel.size();
         raf.seek(fileSize);
 
-        if (fileFormat == source.EtcTables.ETC2PACKAGE_RGBA_NO_MIPMAPS || fileFormat == source.EtcTables.ETC2PACKAGE_sRGBA_NO_MIPMAPS || fileFormat == source.EtcTables.ETC2PACKAGE_RGBA1_NO_MIPMAPS) {
+        if (fileFormat == EtcConstants.ETC2PACKAGE_RGBA_NO_MIPMAPS || fileFormat == EtcConstants.ETC2PACKAGE_sRGBA_NO_MIPMAPS || fileFormat == EtcConstants.ETC2PACKAGE_RGBA1_NO_MIPMAPS) {
             ByteBuffer buffer = ByteBuffer.wrap(alphaData);
             raf.write(buffer.array());
         }
+        raf.close();
+    }
+    
+    public static void writePKMHeader(String dst, int fileFormat, int formatSigned, int width, int height) throws IOException {
+        File outputFile = new File(dst);
+        RandomAccessFile raf = new RandomAccessFile(outputFile, "rw");
+        FileChannel channel = raf.getChannel();
+        long fileSize = channel.size();
+        raf.seek(fileSize);
+
+        byte[] magic = {'P', 'K', 'M', ' '};
+        byte[] version = {'2', '0'};
+        ByteBuffer buffer = ByteBuffer.allocate(10);
+        buffer.order(ByteOrder.BIG_ENDIAN);
+        buffer.put(magic);
+        buffer.put(version);
+        
+        int textureType = fileFormat;
+        if(fileFormat == EtcConstants.ETC2PACKAGE_RG_NO_MIPMAPS && formatSigned == 1)
+            textureType = EtcConstants.ETC2PACKAGE_RG_SIGNED_NO_MIPMAPS;
+        else if(fileFormat == EtcConstants.ETC2PACKAGE_R_NO_MIPMAPS && formatSigned == 1)
+            textureType = EtcConstants.ETC2PACKAGE_R_SIGNED_NO_MIPMAPS;
+        buffer.putShort((short) textureType);
+        buffer.putShort((short) width);
+        buffer.putShort((short) height);
+        raf.write(buffer.array());
+        raf.close();
+    }
+
+    public static void writeActivePixels(String dst, int width, int height) throws IOException {
+        File outputFile = new File(dst);
+        RandomAccessFile raf = new RandomAccessFile(outputFile, "rw");
+        FileChannel channel = raf.getChannel();
+        long fileSize = channel.size();
+        raf.seek(fileSize);
+
+        ByteBuffer buffer = ByteBuffer.allocate(4);
+        buffer.order(ByteOrder.BIG_ENDIAN);
+        buffer.putShort((short) width);
+        buffer.putShort((short) height);
+        raf.write(buffer.array());
+        raf.close();
+    }
+
+    public static void writeKTXHeader(String dst, int fileFormat, int formatSigned, int width, int height) throws IOException {
+        File outputFile = new File(dst);
+        RandomAccessFile raf = new RandomAccessFile(outputFile, "rw");
+        FileChannel channel = raf.getChannel();
+        long fileSize = channel.size();
+        raf.seek(fileSize);
+
+        ByteBuffer buffer = ByteBuffer.allocate(64);
+        buffer.order(ByteOrder.LITTLE_ENDIAN);
+        buffer.put(new byte[]{(byte) 0xAB, 0x4B, 0x54, 0x58, 0x20, 0x31, 0x31, (byte) 0xBB, 0x0D, 0x0A, 0x1A, 0x0A});
+        buffer.putInt(0x04030201); // endianness
+        buffer.putInt(0); // glType
+        buffer.putInt(1); // glTypeSize
+        buffer.putInt(0); // glFormat
+
+        int glInternalFormat = 0;
+        int glBaseInternalFormat = 0;
+        if (fileFormat == EtcConstants.ETC2PACKAGE_R_NO_MIPMAPS) {
+            glBaseInternalFormat = EtcConstants.GL_R;
+            glInternalFormat = formatSigned == 1 ? EtcConstants.GL_COMPRESSED_SIGNED_R11_EAC : EtcConstants.GL_COMPRESSED_R11_EAC;
+        } else if (fileFormat == EtcConstants.ETC2PACKAGE_RG_NO_MIPMAPS) {
+            glBaseInternalFormat = EtcConstants.GL_RG;
+            glInternalFormat = formatSigned == 1 ? EtcConstants.GL_COMPRESSED_SIGNED_RG11_EAC : EtcConstants.GL_COMPRESSED_RG11_EAC;
+        } else if (fileFormat == EtcConstants.ETC2PACKAGE_RGB_NO_MIPMAPS) {
+            glBaseInternalFormat = EtcConstants.GL_RGB;
+            glInternalFormat = EtcConstants.GL_COMPRESSED_RGB8_ETC2;
+        } else if (fileFormat == EtcConstants.ETC2PACKAGE_sRGB_NO_MIPMAPS) {
+            glBaseInternalFormat = EtcConstants.GL_SRGB;
+            glInternalFormat = EtcConstants.GL_COMPRESSED_SRGB8_ETC2;
+        } else if (fileFormat == EtcConstants.ETC2PACKAGE_RGBA_NO_MIPMAPS) {
+            glBaseInternalFormat = EtcConstants.GL_RGBA;
+            glInternalFormat = EtcConstants.GL_COMPRESSED_RGBA8_ETC2_EAC;
+        } else if (fileFormat == EtcConstants.ETC2PACKAGE_sRGBA_NO_MIPMAPS) {
+            glBaseInternalFormat = EtcConstants.GL_SRGB8_ALPHA8;
+            glInternalFormat = EtcConstants.GL_COMPRESSED_SRGB8_ALPHA8_ETC2_EAC;
+        } else if (fileFormat == EtcConstants.ETC2PACKAGE_RGBA1_NO_MIPMAPS) {
+            glBaseInternalFormat = EtcConstants.GL_RGBA;
+            glInternalFormat = EtcConstants.GL_COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_ETC2;
+        } else if (fileFormat == EtcConstants.ETC2PACKAGE_sRGBA1_NO_MIPMAPS) {
+            glBaseInternalFormat = EtcConstants.GL_SRGB8_ALPHA8;
+            glInternalFormat = EtcConstants.GL_COMPRESSED_SRGB8_PUNCHTHROUGH_ALPHA1_ETC2;
+        } else if (fileFormat == EtcConstants.ETC1_RGB_NO_MIPMAPS) {
+            glBaseInternalFormat = EtcConstants.GL_RGB;
+            glInternalFormat = EtcConstants.GL_ETC1_RGB8_OES;
+        }
+        buffer.putInt(glInternalFormat);
+        buffer.putInt(glBaseInternalFormat);
+        buffer.putInt(width);
+        buffer.putInt(height);
+        buffer.putInt(0); // pixelDepth
+        buffer.putInt(0); // numberOfArrayElements
+        buffer.putInt(1); // numberOfFaces
+        buffer.putInt(1); // numberOfMipmapLevels
+        buffer.putInt(0); // bytesOfKeyValueData
+        raf.write(buffer.array());
+        raf.close();
+    }
+
+    public static void writeKTXImageSize(String dst, int imageSize) throws IOException {
+        File outputFile = new File(dst);
+        RandomAccessFile raf = new RandomAccessFile(outputFile, "rw");
+        FileChannel channel = raf.getChannel();
+        long fileSize = channel.size();
+        raf.seek(fileSize);
+
+        ByteBuffer buffer = ByteBuffer.allocate(4);
+        buffer.order(ByteOrder.LITTLE_ENDIAN);
+        buffer.putInt(imageSize);
+        raf.write(buffer.array());
         raf.close();
     }
 } 
