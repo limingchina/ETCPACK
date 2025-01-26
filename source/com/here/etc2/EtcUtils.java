@@ -32,7 +32,10 @@ public class EtcUtils {
     public static int square(int x) {
         return x * x;
     }
-
+    public static float square(float x) {
+        return x * x;
+    }
+    
     public static int jasRound(double x) {
         return (x < 0.0) ? (int) (x - 0.5) : (int) (x + 0.5);
     }

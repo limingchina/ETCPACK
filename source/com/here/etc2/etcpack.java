@@ -72,7 +72,6 @@ public class etcpack {
                         }
                     }
                     // Write compressed data to file
-                    System.out.println("write");
                     EtcFile.writeCompressedBlock(compressed1[0], compressed2[0], arguments.dst, arguments.fileFormat);
                 }
             }
