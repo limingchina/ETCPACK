@@ -29,7 +29,7 @@ Then one can check if the elina_uncompressed.ppm file is similar as the original
 
 RGB format is supported. The compression is using the code path `compressBlockDiffFlipFast`. Inside this implementation, in the C++ code, there are two code paths: `compressBlockDiffFlipAverage` and `compressBlockDiffFlipCombined`. The selection logic is not implemented yet. Currently `compressBlockDiffFlipAverage` is used, though the `compressBlockDiffFlipCombined` is also working. For RGBA image, the porting is partially done by commenting some code path. However, it's not tested yet.
 
-The current files used in the working implementation are etcpack.java, EtcTables.java, EtcUtils.java EtcFile.java, EtcDiffFlipBlock.java. There are also other code originally converted from AI. They should contain quite some bugs. For now, it's just serving as reference if there is need in the future to port more code. 
+The current files used in the working implementation are etcpack.java, EtcTables.java, EtcUtils.java EtcFile.java, EtcDiffFlipBlock.java, EtcConstants.java, Argumetns.java, Decode.java. There are also other code originally converted from AI. They should contain quite some bugs. For now, it's just serving as reference if there is need in the future to port more code.
 
 ## Changes in the original C++ code
 
