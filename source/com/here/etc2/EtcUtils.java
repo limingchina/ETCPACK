@@ -80,11 +80,11 @@ public class EtcUtils {
         return (((2 << (size - 1)) - 1) << shiftHigh(size, startpos));
     }
 
-    public static long putBitsHigh(long dest, int data, int size, int startpos) {
-        return (dest & ~maskHigh(size, startpos)) | (((long)data << shiftHigh(size, startpos)) & maskHigh(size, startpos));
+    public static int putBitsHigh(int dest, int data, int size, int startpos) {
+        return (dest & ~maskHigh(size, startpos)) | ((data << shiftHigh(size, startpos)) & maskHigh(size, startpos));
     }
 
-    public static int getBitsHigh(long input, int size, int startpos) {
+    public static int getBitsHigh(int input, int size, int startpos) {
         return (int) ((input & maskHigh(size, startpos)) >>> shiftHigh(size, startpos));
     }
 

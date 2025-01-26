@@ -8,8 +8,8 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
 public class etcpack {
-
-    public static void main(String[] args) throws IOException {
+        public static void main(String[] args) throws IOException {
+       
         Arguments arguments = EtcFile.readArguments(args);
         System.out.println("Source file: " + arguments.src);
         System.out.println("Destination file: " + arguments.dst);
@@ -72,6 +72,7 @@ public class etcpack {
                         }
                     }
                     // Write compressed data to file
+                    System.out.println("write");
                     EtcFile.writeCompressedBlock(compressed1[0], compressed2[0], arguments.dst, arguments.fileFormat);
                 }
             }

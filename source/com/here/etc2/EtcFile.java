@@ -320,7 +320,17 @@ public class EtcFile {
         raf.close();
         return img;
     }
-    
+    private static void writeBigEndian4ByteWord(int blockadr, RandomAccessFile f) throws IOException {
+        byte[] bytes = new byte[4];
+        int block = blockadr;
+
+        bytes[0] = (byte) ((block >> 24) & 0xff);
+        bytes[1] = (byte) ((block >> 16) & 0xff);
+        bytes[2] = (byte) ((block >> 8) & 0xff);
+        bytes[3] = (byte) ((block >> 0) & 0xff);
+
+        f.write(bytes);
+    }
     public static void writeCompressedBlock(int compressed1, int compressed2, String dst, int fileFormat) throws IOException {
         File outputFile = new File(dst);
         RandomAccessFile raf = new RandomAccessFile(outputFile, "rw");
@@ -328,19 +338,9 @@ public class EtcFile {
         long fileSize = channel.size();
         raf.seek(fileSize);
 
-        if (fileFormat == EtcConstants.ETC1_RGB_NO_MIPMAPS || fileFormat == EtcConstants.ETC2PACKAGE_RGB_NO_MIPMAPS || fileFormat == EtcConstants.ETC2PACKAGE_sRGB_NO_MIPMAPS || fileFormat == EtcConstants.ETC2PACKAGE_R_NO_MIPMAPS || fileFormat == EtcConstants.ETC2PACKAGE_RG_NO_MIPMAPS || fileFormat == EtcConstants.ETC2PACKAGE_R_SIGNED_NO_MIPMAPS || fileFormat == EtcConstants.ETC2PACKAGE_RG_SIGNED_NO_MIPMAPS) {
-            ByteBuffer buffer = ByteBuffer.allocate(8);
-            buffer.order(ByteOrder.BIG_ENDIAN);
-            buffer.putInt(compressed1);
-            buffer.putInt(compressed2);
-            raf.write(buffer.array());
-        } else if (fileFormat == EtcConstants.ETC2PACKAGE_RGBA_NO_MIPMAPS || fileFormat == EtcConstants.ETC2PACKAGE_sRGBA_NO_MIPMAPS || fileFormat == EtcConstants.ETC2PACKAGE_RGBA1_NO_MIPMAPS) {
-            ByteBuffer buffer = ByteBuffer.allocate(8);
-            buffer.order(ByteOrder.BIG_ENDIAN);
-            buffer.putInt(compressed1);
-            buffer.putInt(compressed2);
-            raf.write(buffer.array());
-        }
+        writeBigEndian4ByteWord(compressed1, raf);
+        writeBigEndian4ByteWord(compressed2, raf);
+
         raf.close();
     }
 
