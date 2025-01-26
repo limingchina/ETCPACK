@@ -173,7 +173,7 @@ public class EtcFile {
         arguments.speed = 0;
         arguments.metric = 0;
         arguments.codec = 0;
-        arguments.fileFormat = 0;
+        arguments.colorFormat = 0;
         arguments.verbose = false;
         arguments.formatSigned = 0;
         arguments.ktxFile = false;
@@ -227,27 +227,27 @@ public class EtcFile {
                     }
                 } else if (args[i].equals("-format") || args[i].equals("-f")) {
                     if (args[i + 1].equals("R"))
-                        arguments.fileFormat = EtcConstants.ETC2PACKAGE_R_NO_MIPMAPS;
+                        arguments.colorFormat = EtcConstants.ETC2PACKAGE_R_NO_MIPMAPS;
                     else if (args[i + 1].equals("RG"))
-                        arguments.fileFormat = EtcConstants.ETC2PACKAGE_RG_NO_MIPMAPS;
+                        arguments.colorFormat = EtcConstants.ETC2PACKAGE_RG_NO_MIPMAPS;
                     else if (args[i + 1].equals("R_signed")) {
-                        arguments.fileFormat = EtcConstants.ETC2PACKAGE_R_NO_MIPMAPS;
+                        arguments.colorFormat = EtcConstants.ETC2PACKAGE_R_NO_MIPMAPS;
                         arguments.formatSigned = 1;
                     } else if (args[i + 1].equals("RG_signed")) {
-                        arguments.fileFormat = EtcConstants.ETC2PACKAGE_RG_NO_MIPMAPS;
+                        arguments.colorFormat = EtcConstants.ETC2PACKAGE_RG_NO_MIPMAPS;
                         arguments.formatSigned = 1;
                     } else if (args[i + 1].equals("RGB"))
-                        arguments.fileFormat = EtcConstants.ETC2PACKAGE_RGB_NO_MIPMAPS;
+                        arguments.colorFormat = EtcConstants.ETC2PACKAGE_RGB_NO_MIPMAPS;
                     else if (args[i + 1].equals("sRGB"))
-                        arguments.fileFormat = EtcConstants.ETC2PACKAGE_sRGB_NO_MIPMAPS;
+                        arguments.colorFormat = EtcConstants.ETC2PACKAGE_sRGB_NO_MIPMAPS;
                     else if (args[i + 1].equals("RGBA") || args[i + 1].equals("RGBA8"))
-                        arguments.fileFormat = EtcConstants.ETC2PACKAGE_RGBA_NO_MIPMAPS;
+                        arguments.colorFormat = EtcConstants.ETC2PACKAGE_RGBA_NO_MIPMAPS;
                     else if (args[i + 1].equals("sRGBA") || args[i + 1].equals("sRGBA8"))
-                        arguments.fileFormat = EtcConstants.ETC2PACKAGE_sRGBA_NO_MIPMAPS;
+                        arguments.colorFormat = EtcConstants.ETC2PACKAGE_sRGBA_NO_MIPMAPS;
                     else if (args[i + 1].equals("RGBA1"))
-                        arguments.fileFormat = EtcConstants.ETC2PACKAGE_RGBA1_NO_MIPMAPS;
+                        arguments.colorFormat = EtcConstants.ETC2PACKAGE_RGBA1_NO_MIPMAPS;
                     else if (args[i + 1].equals("sRGBA1"))
-                        arguments.fileFormat = EtcConstants.ETC2PACKAGE_sRGBA1_NO_MIPMAPS;
+                        arguments.colorFormat = EtcConstants.ETC2PACKAGE_sRGBA1_NO_MIPMAPS;
                     else {
                         System.out.println("Error: " + args[i + 1] + " not part of flag " + args[i]);
                         System.exit(1);

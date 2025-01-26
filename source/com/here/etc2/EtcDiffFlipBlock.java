@@ -724,7 +724,7 @@ public class EtcDiffFlipBlock {
     //
     // (See the presentation http://www.jacobstrom.com/publications/PACKMAN.ppt for more info.) 
     //
-    private static void quantize555ColorCombined(float[] avgColIn, int[] encColor, int[] avgColor) {
+    public static void quantize555ColorCombined(float[] avgColIn, int[] encColor, int[] avgColor) {
         float dr, dg, db;
         float kr, kg, kb;
         float wR2, wG2, wB2;

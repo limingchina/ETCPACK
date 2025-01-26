@@ -17,7 +17,7 @@ public class etcpack {
         System.out.println("Speed: " + arguments.speed);
         System.out.println("Metric: " + arguments.metric);
         System.out.println("Codec: " + arguments.codec);
-        System.out.println("Format: " + arguments.fileFormat);
+        System.out.println("Format: " + arguments.colorFormat);
         System.out.println("Verbose: " + arguments.verbose);
         System.out.println("Format Signed: " + arguments.formatSigned);
         System.out.println("ktxFile: " + arguments.ktxFile);
@@ -35,10 +35,10 @@ public class etcpack {
         byte[] alphaData = new byte[16];
         
         int halfbytes = 1;
-        if(arguments.fileFormat == EtcConstants.ETC2PACKAGE_RG_NO_MIPMAPS || arguments.fileFormat == EtcConstants.ETC2PACKAGE_RGBA_NO_MIPMAPS || arguments.fileFormat == EtcConstants.ETC2PACKAGE_sRGBA_NO_MIPMAPS)
+        if(arguments.colorFormat == EtcConstants.ETC2PACKAGE_RG_NO_MIPMAPS || arguments.colorFormat == EtcConstants.ETC2PACKAGE_RGBA_NO_MIPMAPS || arguments.colorFormat == EtcConstants.ETC2PACKAGE_sRGBA_NO_MIPMAPS)
             halfbytes = 2;
 
-        if (arguments.fileFormat == EtcConstants.ETC1_RGB_NO_MIPMAPS || arguments.fileFormat == EtcConstants.ETC2PACKAGE_RGB_NO_MIPMAPS || arguments.fileFormat == EtcConstants.ETC2PACKAGE_sRGB_NO_MIPMAPS) {
+        if (arguments.colorFormat == EtcConstants.ETC1_RGB_NO_MIPMAPS || arguments.colorFormat == EtcConstants.ETC2PACKAGE_RGB_NO_MIPMAPS || arguments.colorFormat == EtcConstants.ETC2PACKAGE_sRGB_NO_MIPMAPS) {
             img = EtcFile.readPPM(arguments.src, width, height);
 
             if (EtcUtils.expandToWidthDivByFour(img, width[0], height[0], expandedWidth, expandedHeight, 24)) {
@@ -50,13 +50,13 @@ public class etcpack {
             
             if(arguments.ktxFile)
             {
-                EtcFile.writeKTXHeader(arguments.dst, arguments.fileFormat, arguments.formatSigned, width[0], height[0]);
+                EtcFile.writeKTXHeader(arguments.dst, arguments.colorFormat, arguments.formatSigned, width[0], height[0]);
                 int imagesize = (expandedWidth[0] * expandedHeight[0] * halfbytes) / 2;
                 EtcFile.writeKTXImageSize(arguments.dst, imagesize);
             }
             else
             {
-                EtcFile.writePKMHeader(arguments.dst, arguments.fileFormat, arguments.formatSigned, width[0], height[0]);
+                EtcFile.writePKMHeader(arguments.dst, arguments.colorFormat, arguments.formatSigned, width[0], height[0]);
                 EtcFile.writeActivePixels(arguments.dst, width[0], height[0]);
             }
 
@@ -68,14 +68,14 @@ public class etcpack {
                         }
                     } else if (arguments.codec == EtcConstants.CODEC_ETC2) {
                         if (arguments.speed == EtcConstants.SPEED_FAST) {
-                            EtcETC2Block.compressBlockETC2Fast(img, null, null, width[0], height[0], x, y, compressed1, compressed2);
+                            EtcETC2Block.compressBlockETC2Fast(arguments.colorFormat, img, null, null, width[0], height[0], x, y, compressed1, compressed2); //EtcETC2Block.compressBlockETC2Fast(arguments.colorformat, img, null, null, width[0], height[0], x, y, compressed1, compressed2);
                         }
                     }
                     // Write compressed data to file
-                    EtcFile.writeCompressedBlock(compressed1[0], compressed2[0], arguments.dst, arguments.fileFormat);
+                    EtcFile.writeCompressedBlock(compressed1[0], compressed2[0], arguments.dst, arguments.colorFormat);
                 }
             }
-        } else if (arguments.fileFormat == EtcConstants.ETC2PACKAGE_RGBA_NO_MIPMAPS || arguments.fileFormat == EtcConstants.ETC2PACKAGE_sRGBA_NO_MIPMAPS || arguments.fileFormat == EtcConstants.ETC2PACKAGE_RGBA1_NO_MIPMAPS || arguments.fileFormat ==  EtcConstants.ETC2PACKAGE_sRGBA1_NO_MIPMAPS) {
+        } else if (arguments.colorFormat == EtcConstants.ETC2PACKAGE_RGBA_NO_MIPMAPS || arguments.colorFormat == EtcConstants.ETC2PACKAGE_sRGBA_NO_MIPMAPS || arguments.colorFormat == EtcConstants.ETC2PACKAGE_RGBA1_NO_MIPMAPS || arguments.colorFormat ==  EtcConstants.ETC2PACKAGE_sRGBA1_NO_MIPMAPS) {
             // ToDo: Read RGBA
             if (EtcUtils.expandToWidthDivByFour(img, width[0], height[0], expandedWidth, expandedHeight, 32)) {
                 img = new byte[3 * expandedWidth[0] * expandedHeight[0]];
@@ -88,28 +88,28 @@ public class etcpack {
             
             if(arguments.ktxFile)
             {
-                EtcFile.writeKTXHeader(arguments.dst, arguments.fileFormat, arguments.formatSigned, width[0], height[0]);
+                EtcFile.writeKTXHeader(arguments.dst, arguments.colorFormat, arguments.formatSigned, width[0], height[0]);
                 int imagesize = (expandedWidth[0] * expandedHeight[0] * halfbytes) / 2;
                 EtcFile.writeKTXImageSize(arguments.dst, imagesize);
             }
             else
             {
-                EtcFile.writePKMHeader(arguments.dst, arguments.fileFormat, arguments.formatSigned, width[0], height[0]);
+                EtcFile.writePKMHeader(arguments.dst, arguments.colorFormat, arguments.formatSigned, width[0], height[0]);
                 EtcFile.writeActivePixels(arguments.dst, width[0], height[0]);
             }
             
             for (int y = 0; y < height[0]; y += 4) {
                 for (int x = 0; x < width[0]; x += 4) {
                     if (arguments.speed == EtcConstants.SPEED_FAST) {
-                        EtcETC2Block.compressBlockETC2Fast(img, alphaimg, null, width[0], height[0], x, y, compressed1, compressed2);
+                        EtcETC2Block.compressBlockETC2Fast(arguments.colorFormat, img, alphaimg, null, width[0], height[0], x, y, compressed1, compressed2);
                         EtcAlphaBlock.compressBlockAlphaFast(alphaimg, x, y, width[0], height[0], alphaData);
                     }
                     // Write compressed data to file
-                    EtcFile.writeCompressedBlock(compressed1[0], compressed2[0], arguments.dst, arguments.fileFormat);
-                    EtcFile.writeCompressedAlphaBlock(alphaData, arguments.dst, arguments.fileFormat);
+                    EtcFile.writeCompressedBlock(compressed1[0], compressed2[0], arguments.dst, arguments.colorFormat);
+                    EtcFile.writeCompressedAlphaBlock(alphaData, arguments.dst, arguments.colorFormat);
                 }
             }
-        } else if (arguments.fileFormat == EtcConstants.ETC2PACKAGE_R_NO_MIPMAPS || arguments.fileFormat == EtcConstants.ETC2PACKAGE_RG_NO_MIPMAPS || arguments.fileFormat == EtcConstants.ETC2PACKAGE_R_SIGNED_NO_MIPMAPS || arguments.fileFormat == EtcConstants.ETC2PACKAGE_RG_SIGNED_NO_MIPMAPS) {
+        } else if (arguments.colorFormat == EtcConstants.ETC2PACKAGE_R_NO_MIPMAPS || arguments.colorFormat == EtcConstants.ETC2PACKAGE_RG_NO_MIPMAPS || arguments.colorFormat == EtcConstants.ETC2PACKAGE_R_SIGNED_NO_MIPMAPS || arguments.colorFormat == EtcConstants.ETC2PACKAGE_RG_SIGNED_NO_MIPMAPS) {
             // ToDo: Read R or RG
             if (EtcUtils.expandToWidthDivByFour(img, width[0], height[0], expandedWidth, expandedHeight, 24)) {
                 img = new byte[3 * expandedWidth[0] * expandedHeight[0]];
@@ -120,23 +120,23 @@ public class etcpack {
             
             if(arguments.ktxFile)
             {
-                EtcFile.writeKTXHeader(arguments.dst, arguments.fileFormat, arguments.formatSigned, width[0], height[0]);
+                EtcFile.writeKTXHeader(arguments.dst, arguments.colorFormat, arguments.formatSigned, width[0], height[0]);
                 int imagesize = (expandedWidth[0] * expandedHeight[0] * halfbytes) / 2;
                 EtcFile.writeKTXImageSize(arguments.dst, imagesize);
             }
             else
             {
-                EtcFile.writePKMHeader(arguments.dst, arguments.fileFormat, arguments.formatSigned, width[0], height[0]);
+                EtcFile.writePKMHeader(arguments.dst, arguments.colorFormat, arguments.formatSigned, width[0], height[0]);
                 EtcFile.writeActivePixels(arguments.dst, width[0], height[0]);
             }
             
             for (int y = 0; y < height[0]; y += 4) {
                 for (int x = 0; x < width[0]; x += 4) {
                     if (arguments.speed == EtcConstants.SPEED_FAST) {
-                        EtcETC2Block.compressBlockETC2Fast(img, null, null, width[0], height[0], x, y, compressed1, compressed2);
+                        EtcETC2Block.compressBlockETC2Fast(arguments.colorFormat, img, null, null, width[0], height[0], x, y, compressed1, compressed2);
                     }
                     // Write compressed data to file
-                    EtcFile.writeCompressedBlock(compressed1[0], compressed2[0], arguments.dst, arguments.fileFormat);
+                    EtcFile.writeCompressedBlock(compressed1[0], compressed2[0], arguments.dst, arguments.colorFormat);
                 }
             }
         }

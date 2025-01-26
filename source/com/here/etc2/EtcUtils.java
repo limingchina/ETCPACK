@@ -35,7 +35,7 @@ public class EtcUtils {
     public static float square(float x) {
         return x * x;
     }
-    
+
     public static int jasRound(double x) {
         return (x < 0.0) ? (int) (x - 0.5) : (int) (x + 0.5);
     }
@@ -59,6 +59,18 @@ public class EtcUtils {
 
     public static int BLUE(byte[] img, int width, int x, int y) {
         return img[3 * (y * width + x) + 2] & 0xFF;
+    }
+
+    public static void setRedChannel(byte[] img, int width, int x, int y, int channels, int value) {
+        img[channels * (y * width + x) + 0] = (byte) value;
+    }
+
+    public static void setGreenChannel(byte[] img, int width, int x, int y, int channels, int value) {
+        img[channels * (y * width + x) + 1] = (byte) value;
+    }
+
+    public static void setBlueChannel(byte[] img, int width, int x, int y, int channels, int value) {
+        img[channels * (y * width + x) + 2] = (byte) value;
     }
 
     // Bit manipulation macros (using Java equivalents)
@@ -187,5 +199,47 @@ public class EtcUtils {
             expandedHeight[0] = height;
             return true;
         }
+    }
+
+    public static double calcBlockErrorRGB(byte[] img, byte[] imgdec, int width, int height, int startx, int starty) {
+        double err = 0;
+
+        for (int xx = startx; xx < startx + 4; xx++) {
+            for (int yy = starty; yy < starty + 4; yy++) {
+                err += EtcUtils.square(1.0f * EtcUtils.RED(img, width, xx, yy) - 1.0f * EtcUtils.RED(imgdec, width, xx, yy));
+                err += EtcUtils.square(1.0f * EtcUtils.GREEN(img, width, xx, yy) - 1.0f * EtcUtils.GREEN(imgdec, width, xx, yy));
+                err += EtcUtils.square(1.0f * EtcUtils.BLUE(img, width, xx, yy) - 1.0f * EtcUtils.BLUE(imgdec, width, xx, yy));
+            }
+        }
+
+        return err;
+    }
+
+    public static double calcBlockErrorRGBA(byte[] img, byte[] imgdec, byte[] alpha, int width, int height, int startx, int starty) {
+        int xx, yy;
+        double err = 0;
+
+        for (xx = startx; xx < startx + 4; xx++) {
+            for (yy = starty; yy < starty + 4; yy++) {
+                // Only count non-transparent pixels
+                if (alpha[yy * width + xx] > 128) {
+                    err += EtcUtils.square(1.0f * EtcUtils.RED(img, width, xx, yy) - 1.0f * EtcUtils.RED(imgdec, width, xx, yy));
+                    err += EtcUtils.square(1.0f * EtcUtils.GREEN(img, width, xx, yy) - 1.0f * EtcUtils.GREEN(imgdec, width, xx, yy));
+                    err += EtcUtils.square(1.0f * EtcUtils.BLUE(img, width, xx, yy) - 1.0f * EtcUtils.BLUE(imgdec, width, xx, yy));
+                }
+            }
+        }
+        return err;
+    }
+    public static boolean hasAlpha(byte[] alphaimg, int ix, int iy, int width) {
+        for (int x = ix; x < ix + 4; x++) {
+            for (int y = iy; y < iy + 4; y++) {
+                int index = x + y * width;
+                if (alphaimg[index] < 128) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 } 
